@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.phoenixhell.securityUaa.mapper.TPermissionMapper">
+    <sql id="data">
+        ur.`user_id`,p.code,r.role_name
+    </sql>
+    <select id="getPermissionsListByUserId" resultType="com.phoenixhell.securityUaa.entity.TPermission">
+        select
+        <include refid="data"/>
+        FROM t_permission p
+        join t_role_permission rp on p.id=rp.permission_id
+        join t_user_role ur on rp.role_id=ur.role_id
+        join t_role r on role.id=ur.role_id
+        where user_id={#userId}
+    </select>
+</mapper>

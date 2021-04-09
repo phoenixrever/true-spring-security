@@ -27,30 +27,30 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
 
 //        String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir("E:\\online-teaching\\service\\service-edu\\src\\main\\java");
-        gc.setAuthor("testjava");
+        gc.setOutputDir("N:\\Git\\true-spring-security\\security-uaa\\src\\main\\java");
+        gc.setAuthor("phoniexhell");
         gc.setOpen(false); //生成后是否打开资源管理器
         gc.setFileOverride(false); //重新生成时文件是否覆盖
         gc.setServiceName("%sService");	//去掉Service接口的首字母I
         gc.setIdType(IdType.ASSIGN_ID); //主键策略
         gc.setDateType(DateType.ONLY_DATE);//定义生成的实体类中日期类型
-        gc.setSwagger2(true);//开启Swagger2模式
+//        gc.setSwagger2(true);//开启Swagger2模式
 
         mpg.setGlobalConfig(gc);
 
         // 3、数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/guli?serverTimezone=GMT%2B8");
+        dsc.setUrl("jdbc:mysql://192.168.1.100:3306/guli?serverTimezone=GMT%2B8");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("159629zxc");
+        dsc.setPassword("123456");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 
         // 4、包配置
         PackageConfig pc = new PackageConfig();
         pc.setParent("com.phoenixhell");
-        pc.setModuleName("serviceEdu"); //模块名 包名最后一个
+        pc.setModuleName("securityUaa"); //模块名 包名最后一个
         pc.setController("controller");
         pc.setEntity("entity");
         pc.setService("service");
@@ -59,7 +59,7 @@ public class CodeGenerator {
 
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("edu_teacher");
+        strategy.setInclude("t_permission","t_user");
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
 

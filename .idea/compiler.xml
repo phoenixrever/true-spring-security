@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="api-gateway" />
+        <module name="security-uaa" />
+        <module name="security-order" />
+        <module name="security-base" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api-gateway" target="1.8" />
+      <module name="common" target="1.8" />
+      <module name="security-base" target="1.8" />
+      <module name="security-order" target="1.8" />
+      <module name="security-uaa" target="1.8" />
+      <module name="true-spring-security" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
+      <module name="security-base" options="-parameters" />
+      <module name="security-order" options="-parameters" />
+      <module name="security-uaa" options="-parameters" />
+    </option>
+  </component>
+</project>
