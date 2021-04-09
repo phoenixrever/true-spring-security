@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -31,8 +32,6 @@ import java.util.Arrays;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    @Autowired
-    private ClientDetailsService clientDetailsService;
     @Autowired
     private TokenStore tokenStore;
 //    @Autowired
@@ -71,9 +70,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Bean
     public ClientDetailsService clientDetailsService(){
-        JdbcClientDetailsService clientDetailsServiced = new JdbcClientDetailsService(dataSource);
-        clientDetailsServiced.setPasswordEncoder(passwordEncoder);
-        return clientDetailsServiced;
+        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+        clientDetailsService.setPasswordEncoder(passwordEncoder);
+        return clientDetailsService;
     }
 
     /**
@@ -83,7 +82,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public AuthorizationServerTokenServices tokenServices(){
         DefaultTokenServices tokenServices = new DefaultTokenServices();
-        tokenServices.setClientDetailsService(clientDetailsService);//客户端信息服务
+        tokenServices.setClientDetailsService(clientDetailsService());//客户端信息服务
         tokenServices.setSupportRefreshToken(true);//是否产生刷新令牌
         tokenServices.setTokenStore(tokenStore);//令牌存储策略
         //令牌增加
@@ -103,16 +102,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .authenticationManager(authenticationManager)//密码模式
-                .authorizationCodeServices(authorizationCodeServices())//授权码模式
+                .authorizationCodeServices(authorizationCodeServices(dataSource))//授权码模式
                 .tokenServices(tokenServices())//令牌管理服务
                 .allowedTokenEndpointRequestMethods(HttpMethod.POST);//允许post提交访问令牌
     }
 
     //设置授权码模式的授权码如何存取，暂时采用内存方式
 //    @Bean 换成采用数据库
-    public AuthorizationCodeServices authorizationCodeServices(){
-        return new InMemoryAuthorizationCodeServices();
-    }
+//    public AuthorizationCodeServices authorizationCodeServices(){
+//        return new InMemoryAuthorizationCodeServices();
+//    }
 
     public AuthorizationCodeServices authorizationCodeServices(DataSource dataSource){
         return new JdbcAuthorizationCodeServices(dataSource);

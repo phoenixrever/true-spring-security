@@ -1,0 +1,79 @@
+server:
+  port: 9527
+spring:
+  application:
+    name: server-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true #使用服务发现路由
+          lower-case-service-id: true #服务路由名小写
+      routes:
+        # - 表示分支 不嗯呢少了
+        - id: security-uaa #路由的ID，没有固定规则但要求唯一，建议配合服务名
+          #          uri: http://localhost:8001   #匹配后提供服务的路由地址
+          uri: lb://security-uaa  #lb 负载均衡
+          predicates:
+            - Path=/oauth/**   #断言,路径相匹配的进行路由
+#            - After=2021-02-08T21:31:00.488+08:00[Asia/Shanghai]
+#            - Before=2022-02-08T21:31:00.488+08:00[Asia/Shanghai]
+#            - Between=2020-02-08T21:31:00.488+08:00[Asia/Shanghai],2022-02-08T21:31:00.488+08:00[Asia/Shanghai]
+            #curl http://localhost:9527/payment/get/11 --cookie "username=shadow"
+#            - Cookie=username,shadow
+            #请求头中要有X-Request-Id属性并且值为整数的正则表达式
+            #curl http://localhost:9527/payment/get/11 -H "X-Request-Id:11"
+#            - Header=X-Request-Id,\d+
+            #curl http://localhost:9527/payment/get/11 -H "Host:www.phoenixhell.com"
+#            - Host=**.phoenixhell.com
+#            - Method=GET
+            #要有参数名称并且是正整数才能路由
+            #curl http://localhost:9527/payment/get/12?username=12
+#            - Query=username, \d+
+        #            - ReadBodyPredicateFactory
+        #            - RemoteAddr
+        #            - Weight
+        #            - CloudFoundryRouteService
+        - id: security-order
+          uri: lb://security-order  #lb 负载均衡
+          predicates:
+            - Path=/resource/**   #断言,路径相匹配的进行路由
+        - id: server-ucenter
+          uri: lb://server-ucenter  #lb 负载均衡
+          predicates:
+            - Path=/serviceUcenter/**
+        - id: server-order
+          uri: lb://server-order  #lb 负载均衡
+          predicates:
+            - Path=/serviceOrder/**
+        - id: server-acl
+          uri: lb://server-acl  #lb 负载均衡
+          predicates:
+            - Path=/serviceAcl/**,/acl/**
+        - id: server-vod
+          uri: lb://server-vod #lb 负载均衡
+          predicates:
+            - Path=/serviceVod/**
+        - id: server-cms
+          uri: lb://server-cms  #lb 负载均衡
+          predicates:
+            - Path=/serviceCms/**
+        - id: server-oss
+          uri: lb://server-oss  #lb 负载均衡
+          predicates:
+            - Path=/serviceOss/**
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1
+#          filters:
+#            - name: Hystrix
+#              args:
+#                name: fallbackcmd
+#                fallbackUri: forward:/fallback
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 1000

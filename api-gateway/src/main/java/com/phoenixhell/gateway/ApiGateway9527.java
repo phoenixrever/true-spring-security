@@ -1,21 +1,20 @@
-package com.phoenixhell.securityUaa;
+package com.phoenixhell.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * @author phoenixhell
- * @since 2021/4/8 0008-上午 9:37
+ * @since 2021/4/9 0009-下午 2:45
  */
+
 @SpringBootApplication
-@ComponentScan(basePackages = "com.phoenixhell")
-@EnableSwagger2
 @EnableDiscoveryClient
-public class UAAService8001 {
+@ComponentScan(basePackages = "com.phoenixhell")
+public class ApiGateway9527 {
     public static void main(String[] args) {
-        SpringApplication.run(UAAService8001.class,args);
+        SpringApplication.run(ApiGateway9527.class,args);
     }
 }

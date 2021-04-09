@@ -1,4 +1,4 @@
-package com.phoenixhell.order.config;
+package com.phoenixhell.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
  * @author phoenixhell
  * @since 2021/4/8 0008-上午 11:00
  */
-//@Configuration
+@Configuration
 public class TokenConfig {
 
     private static final String SIGNING_KEY="secret";

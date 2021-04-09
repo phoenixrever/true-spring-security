@@ -22,15 +22,16 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public static final String RESOURCE_ID="rest1";
-    @Autowired
-    private TokenStore tokenStore;
+//    @Autowired
+//    private TokenStore tokenStore;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId(RESOURCE_ID)//资源ID
-                .tokenStore(tokenStore)// 本地验证jwt令牌
-//                .tokenServices(tokenService())//远程验证令牌的服务
-                .stateless(true);
+        super.configure(resources);
+//        resources.resourceId(RESOURCE_ID)//资源ID
+//                .tokenStore(tokenStore)// 本地验证jwt令牌
+////                .tokenServices(tokenService())//远程验证令牌的服务
+//                .stateless(true);
     }
 
 
