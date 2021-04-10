@@ -30,5 +30,4 @@ public class TUser implements Serializable {
 
     private String fullname;
 
-
 }

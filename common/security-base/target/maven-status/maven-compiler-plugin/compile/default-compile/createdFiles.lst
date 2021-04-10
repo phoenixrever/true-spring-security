@@ -1,0 +1,8 @@
+com\phoenixhell\securityBase\config\FeignConfig$LogConfig.class
+com\phoenixhell\securityBase\config\MybatisPage.class
+com\phoenixhell\securityBase\config\FeignConfig.class
+com\phoenixhell\securityBase\config\RedisConfig.class
+com\phoenixhell\securityBase\entity\User.class
+com\phoenixhell\securityBase\handler\MyMetaObjectHandler.class
+com\phoenixhell\securityBase\utils\EncryptUtil.class
+com\phoenixhell\securityBase\config\SwaggerConfig.class

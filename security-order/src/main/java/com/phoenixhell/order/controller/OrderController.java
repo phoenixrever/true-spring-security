@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2021/4/8 0008-下午 3:31
  */
 @RestController
-@RequestMapping("/resource")
+@RequestMapping("/order")
 public class OrderController {
-    @GetMapping("/r1")
-    @PreAuthorize(value = "hasAuthority('p3')")
+    @GetMapping("/teacher")
+    @PreAuthorize("hasAnyAuthority('teacher')")
     public String r1(){
         return "permission granted";
     }
 }
+

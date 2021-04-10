@@ -11,6 +11,11 @@
 
     <artifactId>security-order</artifactId>
     <dependencies>
+        <dependency>
+            <groupId>com.phoenixhell</groupId>
+            <artifactId>security-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--新增hystrix-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -79,18 +84,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
-        </dependency>
-        <!--swagger-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.7.0</version>
-        </dependency>
-        <!--swagger ui-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

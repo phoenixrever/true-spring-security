@@ -2,6 +2,8 @@ package com.phoenixhell.gateway.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.google.common.net.HttpHeaders;
+import com.phoenixhell.securityBase.utils.EncryptUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -9,6 +11,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -46,20 +49,30 @@ public class GatewayFilterConfig  implements GlobalFilter, Ordered {
         if (StringUtils.isBlank(token)) {
             return noTokenMono(exchange);
         }
+        try {
+            tokenStore.readAccessToken(token);
+            //经过gataway传递token会丢失重新构造个请求
+            ServerHttpRequest req =  exchange.getRequest().mutate().headers(header -> header.add("token", token)).build();
+            ServerWebExchange webExchange = exchange.mutate().request(req).build();
+            return chain.filter(webExchange);
+        } catch (InvalidTokenException e) {
+            log.info("无效的token: {}", token);
+            return invalidTokenMono(exchange);
+        }
+        /*
         //3 判断是否是有效的token
         OAuth2AccessToken oAuth2AccessToken;
         try {
             oAuth2AccessToken = tokenStore.readAccessToken(token);
             Map<String, Object> additionalInformation = oAuth2AccessToken.getAdditionalInformation();
             //取出用户身份信息
-//            String principal = MapUtils.getString(additionalInformation, "user_name");
-            String principal ="shadow";
+            String principal = (String)additionalInformation.get("user_name");
             List<String> authorities = (List<String>) additionalInformation.get("authorities");
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("principal",principal);
             jsonObject.put("authorities",authorities);
             //给header里面添加值
-            String base64 = com.common.utils.EncryptUtil.encodeUTF8StringBase64(jsonObject.toJSONString());
+            String base64 = EncryptUtil.encodeUTF8StringBase64(jsonObject.toJSONString());
             ServerHttpRequest tokenRequest = exchange.getRequest().mutate().header("json-token", base64).build();
             ServerWebExchange build = exchange.mutate().request(tokenRequest).build();
             return chain.filter(build);
@@ -67,13 +80,14 @@ public class GatewayFilterConfig  implements GlobalFilter, Ordered {
             log.info("无效的token: {}", token);
             return invalidTokenMono(exchange);
         }
+        */
     }
 
     /**
      * 获取token
      */
     private String getToken(ServerWebExchange exchange) {
-        String tokenStr = exchange.getRequest().getHeaders().getFirst("Authorization");
+        String tokenStr = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (StringUtils.isBlank(tokenStr)) {
             return null;
         }
