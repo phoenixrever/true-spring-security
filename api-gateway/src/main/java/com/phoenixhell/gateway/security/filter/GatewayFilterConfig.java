@@ -1,9 +1,8 @@
-package com.phoenixhell.gateway.filter;
+package com.phoenixhell.gateway.security.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.google.common.net.HttpHeaders;
-import com.phoenixhell.securityBase.utils.EncryptUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -11,11 +10,10 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -23,12 +21,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author phoenixhell
  * @since 2021/4/9 0009-下午 3:39
+ * 可以只做转发 可能更安全
  */
 @Component
 @Slf4j
@@ -49,38 +46,25 @@ public class GatewayFilterConfig  implements GlobalFilter, Ordered {
         if (StringUtils.isBlank(token)) {
             return noTokenMono(exchange);
         }
+
+        //3 判断是否是有效的token
         try {
-            tokenStore.readAccessToken(token);
-            //经过gataway传递token会丢失重新构造个请求
-            ServerHttpRequest req =  exchange.getRequest().mutate().headers(header -> header.add("token", token)).build();
+            OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(token);
+            //取出用户身份信息
+            String principal = oAuth2Authentication.getName();
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("principal",principal);
+            //给header里面添加值
+//            String base64 = EncryptUtil.encodeUTF8StringBase64(jsonObject.toJSONString());
+//            ServerHttpRequest tokenRequest = exchange.getRequest().mutate().header("json-token", base64).build();
+//            ServerWebExchange build = exchange.mutate().request(tokenRequest).build();
+            ServerHttpRequest req = exchange.getRequest().mutate().headers(header -> header.add("token", token)).build();
             ServerWebExchange webExchange = exchange.mutate().request(req).build();
             return chain.filter(webExchange);
         } catch (InvalidTokenException e) {
             log.info("无效的token: {}", token);
             return invalidTokenMono(exchange);
         }
-        /*
-        //3 判断是否是有效的token
-        OAuth2AccessToken oAuth2AccessToken;
-        try {
-            oAuth2AccessToken = tokenStore.readAccessToken(token);
-            Map<String, Object> additionalInformation = oAuth2AccessToken.getAdditionalInformation();
-            //取出用户身份信息
-            String principal = (String)additionalInformation.get("user_name");
-            List<String> authorities = (List<String>) additionalInformation.get("authorities");
-            JSONObject jsonObject=new JSONObject();
-            jsonObject.put("principal",principal);
-            jsonObject.put("authorities",authorities);
-            //给header里面添加值
-            String base64 = EncryptUtil.encodeUTF8StringBase64(jsonObject.toJSONString());
-            ServerHttpRequest tokenRequest = exchange.getRequest().mutate().header("json-token", base64).build();
-            ServerWebExchange build = exchange.mutate().request(tokenRequest).build();
-            return chain.filter(build);
-        } catch (InvalidTokenException e) {
-            log.info("无效的token: {}", token);
-            return invalidTokenMono(exchange);
-        }
-        */
     }
 
     /**

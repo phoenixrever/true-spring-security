@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: server-gateway
+  profiles:
+    active: home
   cloud:
     gateway:
       discovery:
@@ -69,6 +71,7 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1
+
 #          filters:
 #            - name: Hystrix
 #              args:

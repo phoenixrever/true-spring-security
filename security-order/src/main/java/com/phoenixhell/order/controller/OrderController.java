@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/order")
 public class OrderController {
     @GetMapping("/teacher")
-    @PreAuthorize("hasAnyAuthority('teacher')")
+    @PreAuthorize("hasAuthority('teacher')")
     public String r1(){
         return "permission granted";
     }

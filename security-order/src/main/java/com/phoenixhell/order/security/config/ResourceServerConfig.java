@@ -1,5 +1,6 @@
 package com.phoenixhell.order.security.config;
 
+import com.phoenixhell.order.security.handler.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -25,7 +26,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         resources.resourceId(RESOURCE_ID)//资源ID
                 .tokenStore(tokenStore)// 本地验证jwt令牌
 //                .tokenServices(tokenService())//远程验证令牌的服务
-                .stateless(true);
+                //无状态 不保留登录信息每次登录都要带token
+                .stateless(true)
+                .accessDeniedHandler(new CustomAccessDeniedHandler());
     }
 
 
